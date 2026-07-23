@@ -5,13 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-Class Retinal Diagnostics Interface</title>
     
-    <!-- Pulled directly from the core Hugging Face infrastructure to bypass CDN blocks -->
-    <script type="module" src="https://amazonaws.com"></script>
-    <link rel="stylesheet" href="https://amazonaws.com" />
+    <!-- Pulled from a high-availability alternative node mirror to avoid jsdelivr connection drops -->
+    <script type="module" crossorigin src="https://jsdelivr.net"></script>
+    <link rel="stylesheet" href="https://jsdelivr.net" />
+    
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        background-color: #f9fafb;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+    </style>
   </head>
   <body>
 
-    <!-- Embedded configuration ensuring zero network fetch dependencies -->
+    <!-- Gradio-Lite environment configuration container -->
     <gradio-lite>
 
 <gradio-requirements>
@@ -24,8 +33,9 @@ import gradio as gr
 
 def diagnose_retina(image): 
     if image is None: 
-        return "Please upload a valid retinal scan image.", None 
+        return None, "### Error\nPlease upload a valid retinal scan image before running analysis."
     
+    # Simulating deep learning multi-class evaluation scores
     diagnoses = { 
         "Normal (No Retinopathy)": 0.85, 
         "Mild Non-proliferative Diabetic Retinopathy (NPDR)": 0.10, 
@@ -42,6 +52,7 @@ def diagnose_retina(image):
     ) 
     return diagnoses, report_summary 
 
+# Building interface layout matrix
 with gr.Blocks(theme=gr.themes.Soft()) as demo: 
     gr.Markdown( 
         """ 

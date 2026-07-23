@@ -3,7 +3,7 @@ import gradio as gr
 
 def diagnose_retina(image): 
     if image is None: 
-        return "Please upload a valid retinal scan image.", None 
+        return None, "### Error\nPlease upload a valid retinal scan image before running analysis."
     
     diagnoses = { 
         "Normal (No Retinopathy)": 0.85, 
@@ -16,7 +16,7 @@ def diagnose_retina(image):
     report_summary = ( 
         "### Diagnostic Summary Report\n" 
         "- **Primary Assessment**: Preliminary screening completed successfully.\n" 
-        "- **Execution Environment**: Serverless client edge sandbox (WASM/Pyodide).\n" 
+        "- **Execution Environment**: Local Python Server.\n" 
         "- **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation." 
     ) 
     return diagnoses, report_summary 
@@ -42,4 +42,6 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         outputs=[output_labels, output_text] 
     ) 
     
-demo.queue()
+if __name__ == "__main__":
+    demo.queue()
+    demo.launch()
