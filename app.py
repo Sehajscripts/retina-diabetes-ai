@@ -1,4 +1,3 @@
-import os
 import gradio as gr
 
 def diagnose_retina(image):
@@ -21,7 +20,6 @@ def diagnose_retina(image):
     )
     return diagnoses, report_summary
 
-# 1. Open the interface layout block
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown(
         """
@@ -37,12 +35,10 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
             output_labels = gr.Label(num_top_classes=3, label="Diagnostic Confidence Levels")
             output_text = gr.Markdown(label="Clinical Assessment Notes")
             
-    # 2. Place the click action handler INSIDE the layout block here
     submit_btn.click(
         fn=diagnose_retina,
         inputs=input_img,
         outputs=[output_labels, output_text]
     )
 
-# 3. Queue processing goes outside the block at the very end (NO .launch() allowed)
 demo.queue()
