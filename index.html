@@ -4,63 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-Class Retinal Diagnostics Interface</title>
-    <!-- Load Gradio-Lite web component -->
-    <script type="module" src="https://jsdelivr.net"></script>
-    <link rel="stylesheet" href="https://jsdelivr.net" />
+    <!-- Alternate stable CDN to fix connection timeout issues -->
+    <script type="module" src="https://unpkg.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com" />
   </head>
   <body>
-    <!-- Gradio-Lite application sandbox -->
-    <gradio-lite>
+    <!-- Serverless container runtime execution environment -->
+    <gradio-lite id="gradio-container">
 <gradio-requirements>
 pillow
 </gradio-requirements>
-
-<gradio-file name="app.py" entrypoint>
-import gradio as gr
-
-def diagnose_retina(image):
-    if image is None:
-        return "Please upload a valid retinal scan image.", None
-    
-    diagnoses = {
-        "Normal (No Retinopathy)": 0.85,
-        "Mild Non-proliferative Diabetic Retinopathy (NPDR)": 0.10,
-        "Moderate NPDR": 0.03,
-        "Severe NPDR": 0.01,
-        "Proliferative Diabetic Retinopathy (PDR)": 0.01
-    }
-    
-    report_summary = (
-        "### Diagnostic Summary Report\n"
-        "- **Primary Assessment**: Preliminary screening completed successfully.\n"
-        "- **Execution Environment**: Serverless client edge sandbox (WASM/Pyodide).\n"
-        "- **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation."
-    )
-    return diagnoses, report_summary
-
-with gr.Blocks(theme=gr.themes.Soft()) as demo:
-    gr.Markdown(
-        """
-        # 👁️ Multi-Class Retinal Diagnostics Interface
-        ### Serverless AI Screening Engine for Diabetic Retinopathy Detection
-        """
-    )
-    with gr.Row():
-        with gr.Column(scale=1):
-            input_img = gr.Image(type="pil", label="Upload Retinal Fundus Scan Image")
-            submit_btn = gr.Button("Analyze Retinal Scan", variant="primary")
-        with gr.Column(scale=1):
-            output_labels = gr.Label(num_top_classes=3, label="Diagnostic Confidence Levels")
-            output_text = gr.Markdown(label="Clinical Assessment Notes")
-            
-    submit_btn.click(
-        fn=diagnose_retina,
-        inputs=input_img,
-        outputs=[output_labels, output_text]
-    )
-
-demo.queue()
-</gradio-file>
     </gradio-lite>
+
+    <script>
+      async function loadExternalApp() {
+        try {
+          const response = await fetch('./app.py');
+          if (!response.ok) throw new Error('Failed to fetch app.py profile from directory root.');
+          
+          let pythonCode = await response.text();
+          
+          // Clean up local production server hooks to make code compatible with WebAssembly environment
+          pythonCode = pythonCode.replace(/demo\.launch\([\s\S]*?\)/g, 'demo.queue()');
+          pythonCode = pythonCode.replace(/print\(f"🚀 Deploying Production Dashboard[\s\S]*?\)/g, 'pass');
+
+          const container = document.getElementById('gradio-container');
+          const fileTag = document.createElement('gradio-file');
+          fileTag.setAttribute('name', 'app.py');
+          fileTag.setAttribute('entrypoint', '');
+          fileTag.textContent = pythonCode;
+          
+          container.appendChild(fileTag);
+        } catch (error) {
+          console.error('Critical deployment mounting exception:', error);
+        }
+      }
+      loadExternalApp();
+    </script>
   </body>
 </html>
