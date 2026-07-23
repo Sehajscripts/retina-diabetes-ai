@@ -1,43 +1,27 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
+<html>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Multi-Class Retinal Diagnostics Interface</title>
-    
-    <!-- Load the mandatory Gradio-Lite WebAssembly core engine script -->
-    <script type="module" src="https://amazonaws.com"></script>
-    
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #0f172a;
-            font-family: system-ui, -apple-system, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            padding: 20px;
-        }
-    </style>
-</head>
-<body>
+    <title>Multi-Class Retinal Diagnostics Interface</title>
+    <!-- Load Gradio-Lite web component -->
+    <script type="module" src="https://jsdelivr.net"></script>
+    <link rel="stylesheet" href="https://jsdelivr.net" />
+  </head>
+  <body>
+    <!-- Gradio-Lite application sandbox -->
+    <gradio-lite>
+<gradio-requirements>
+pillow
+</gradio-requirements>
 
-    <div class="container">
-        <!-- The Gradio Python app runs fully serverless right inside these tags -->
-        <gradio-app>
+<gradio-file name="app.py" entrypoint>
 import gradio as gr
 
 def diagnose_retina(image):
     if image is None:
         return "Please upload a valid retinal scan image.", None
     
-    # Static inference matrix mapping representing the multi-class model diagnostics
     diagnoses = {
         "Normal (No Retinopathy)": 0.85,
         "Mild Non-proliferative Diabetic Retinopathy (NPDR)": 0.10,
@@ -52,10 +36,8 @@ def diagnose_retina(image):
         "- **Execution Environment**: Serverless client edge sandbox (WASM/Pyodide).\n"
         "- **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation."
     )
-    
     return diagnoses, report_summary
 
-# Building the visual diagnostic dashboard layout matrix
 with gr.Blocks(theme=gr.themes.Soft()) as demo:
     gr.Markdown(
         """
@@ -63,12 +45,10 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         ### Serverless AI Screening Engine for Diabetic Retinopathy Detection
         """
     )
-    
     with gr.Row():
         with gr.Column(scale=1):
             input_img = gr.Image(type="pil", label="Upload Retinal Fundus Scan Image")
             submit_btn = gr.Button("Analyze Retinal Scan", variant="primary")
-            
         with gr.Column(scale=1):
             output_labels = gr.Label(num_top_classes=3, label="Diagnostic Confidence Levels")
             output_text = gr.Markdown(label="Clinical Assessment Notes")
@@ -79,9 +59,8 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         outputs=[output_labels, output_text]
     )
 
-demo.queue().launch()
-        </gradio-app>
-    </div>
-
-</body>
+demo.queue()
+</gradio-file>
+    </gradio-lite>
+  </body>
 </html>
