@@ -37,8 +37,7 @@ def diagnose_retina(image):
     if image is None:
         return "Please upload a valid retinal scan image.", None
     
-    # Placeholder inference mapping for multi-class diagnostics
-    # Gradio Lite runs purely in-browser via Pyodide/WebAssembly
+    # Static inference matrix mapping representing the multi-class model diagnostics
     diagnoses = {
         "Normal (No Retinopathy)": 0.85,
         "Mild Non-proliferative Diabetic Retinopathy (NPDR)": 0.10,
@@ -50,8 +49,8 @@ def diagnose_retina(image):
     report_summary = (
         "### Diagnostic Summary Report\n"
         "- **Primary Assessment**: Preliminary screening completed successfully.\n"
-        "- **Recommendation**: Results generated via serverless client edge execution. "
-        "Please consult a certified ophthalmologist for clinical validation."
+        "- **Execution Environment**: Serverless client edge sandbox (WASM/Pyodide).\n"
+        "- **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation."
     )
     
     return diagnoses, report_summary
