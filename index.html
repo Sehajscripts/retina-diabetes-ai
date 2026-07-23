@@ -29,6 +29,6 @@
     </div>
 
     <!-- The Gradio wrapper engine triggers a custom event when it finishes rendering -->
-    <gradio-app src="app.py" @render="document.getElementById('loader').style.opacity='0'; setTimeout(() => document.getElementById('loader').remove(), 500);"></gradio-app>
+    <gradio-app src="https://raw.githubusercontent.com/Sehajscripts/retina-diabetes-ai/refs/heads/main/app.py" @render="document.getElementById('loader').style.opacity='0'; setTimeout(() => document.getElementById('loader').remove(), 500);"></gradio-app>
 </body>
 </html>
