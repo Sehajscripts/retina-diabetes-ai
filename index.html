@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Multi-Class Retinal Diagnostics Interface</title>
-    <!-- Explicit absolute asset pathways to completely bypass CDN root CORS tracking blocks -->
-    <script type="module" src="https://unpkg.com"></script>
-    <link rel="stylesheet" href="https://unpkg.com" />
+    <!-- Using cdnjs to completely bypass the CORS and timeout blocks -->
+    <script type="module" src="https://cloudflare.com"></script>
+    <link rel="stylesheet" href="https://cloudflare.com" />
   </head>
   <body>
-    <!-- Engine Container -->
     <gradio-lite id="gradio-container">
 <gradio-requirements>
 pillow
@@ -19,13 +18,16 @@ pillow
     <script>
       async function loadExternalApp() {
         try {
-          // Pulls your cleaned up code directly from app.py at runtime
           const response = await fetch('./app.py');
-          if (!response.ok) throw new Error('Could not read your app.py asset.');
+          if (!response.ok) throw new Error('Could not find or load your app.py file.');
           
-          const pythonCode = await response.text();
+          let pythonCode = await response.text();
+          
+          // Smart cleaning: Automatically strips out the .launch() block so you don't have to touch app.py
+          pythonCode = pythonCode.replace(/demo\.launch\([\s\S]*?\)/g, '');
+          pythonCode += "\ndemo.queue()"; 
+          
           const container = document.getElementById('gradio-container');
-          
           const fileTag = document.createElement('gradio-file');
           fileTag.setAttribute('name', 'app.py');
           fileTag.setAttribute('entrypoint', '');
@@ -33,7 +35,7 @@ pillow
           
           container.appendChild(fileTag);
         } catch (error) {
-          console.error('App engine mounting failure:', error);
+          console.error('Error mounting external file script:', error);
         }
       }
       loadExternalApp();
