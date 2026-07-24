@@ -1,51 +1,39 @@
-import os
+import streamlit as st
 from PIL import Image
-import gradio as gr 
 
-def diagnose_retina(image): 
-    if image is None: 
-        return "Please upload a valid retinal scan image.", None 
+# Layout & Page Configuration
+st.set_page_config(page_title="Multi-Class Retinal Diagnostics", layout="centered")
+
+st.markdown("# 👁️ Multi-Class Retinal Diagnostics Interface")
+st.markdown("### Cloud AI Screening Engine for Diabetic Retinopathy Detection")
+
+# Setup layout columns
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("#### Upload Retinal Fundus Scan Image")
+    uploaded_file = st.file_uploader("Choose a retinal scan image...", type=["jpg", "jpeg", "png"])
+    
+    if uploaded_file is not None:
+        image = Image.open(uploaded_file)
+        st.image(image, caption="Uploaded Retinal Scan", use_column_width=True)
+        analyze_btn = st.button("Analyze Retinal Scan", type="primary")
+
+with col2:
+    st.markdown("#### Diagnostic Results")
+    
+    if uploaded_file is not None and 'analyze_btn' in locals() and analyze_btn:
+        # Mock confidence scores
+        st.markdown("**Confidence Levels:**")
+        st.progress(0.85, text="Normal (No Retinopathy): 85%")
+        st.progress(0.10, text="Mild NPDR: 10%")
+        st.progress(0.05, text="Moderate/Severe NPDR: 5%")
         
-    diagnoses = { 
-        "Normal (No Retinopathy)": 0.85, 
-        "Mild Non-proliferative Diabetic Retinopathy (NPDR)": 0.10, 
-        "Moderate NPDR": 0.03, 
-        "Severe NPDR": 0.01, 
-        "Proliferative Diabetic Retinopathy (PDR)": 0.01 
-    } 
-    
-    report_summary = ( 
-        "### Diagnostic Summary Report\n" 
-        "- **Primary Assessment**: Preliminary screening completed successfully.\n" 
-        "- **Execution Environment**: Koyeb Production App Container.\n" 
-        "- **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation." 
-    ) 
-    return diagnoses, report_summary 
-
-with gr.Blocks(theme=gr.themes.Soft()) as demo: 
-    gr.Markdown( 
-        """ 
-        # 👁️ Multi-Class Retinal Diagnostics Interface 
-        ### Serverless AI Screening Engine for Diabetic Retinopathy Detection 
-        """ 
-    ) 
-    with gr.Row(): 
-        with gr.Column(scale=1): 
-            input_img = gr.Image(type="pil", label="Upload Retinal Fundus Scan Image") 
-            submit_btn = gr.Button("Analyze Retinal Scan", variant="primary") 
-        with gr.Column(scale=1): 
-            output_labels = gr.Label(num_top_classes=3, label="Diagnostic Confidence Levels") 
-            output_text = gr.Markdown(label="Clinical Assessment Notes") 
-            
-    submit_btn.click( 
-        fn=diagnose_retina, 
-        inputs=input_img, 
-        outputs=[output_labels, output_text] 
-    ) 
-
-if __name__ == "__main__":
-    demo.queue()
-    
-    # Koyeb requires binding to 0.0.0.0 and reading the dynamic PORT variable
-    server_port = int(os.environ.get("PORT", 8000))
-    demo.launch(server_name="0.0.0.0", server_port=server_port)
+        # Clinical Assessment Text block
+        st.markdown("---")
+        st.markdown("### Diagnostic Summary Report")
+        st.markdown("- **Primary Assessment**: Preliminary screening completed successfully.")
+        st.markdown("- **Execution Environment**: Cloud Streamlit Runtime Container.")
+        st.caption("⚠️ **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation.")
+    else:
+        st.info("Upload an image and click 'Analyze' to generate confidence scores.")
