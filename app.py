@@ -1,10 +1,11 @@
+import os
 from PIL import Image
 import gradio as gr 
 
 def diagnose_retina(image): 
     if image is None: 
-        return None, "### Error\nPlease upload a valid retinal scan image before running analysis."
-    
+        return "Please upload a valid retinal scan image.", None 
+        
     diagnoses = { 
         "Normal (No Retinopathy)": 0.85, 
         "Mild Non-proliferative Diabetic Retinopathy (NPDR)": 0.10, 
@@ -16,7 +17,7 @@ def diagnose_retina(image):
     report_summary = ( 
         "### Diagnostic Summary Report\n" 
         "- **Primary Assessment**: Preliminary screening completed successfully.\n" 
-        "- **Execution Environment**: Local Python Server.\n" 
+        "- **Execution Environment**: Koyeb Production App Container.\n" 
         "- **Clinical Notice**: This application provides screening indicators. Please consult an ophthalmologist for definitive clinical validation." 
     ) 
     return diagnoses, report_summary 
@@ -41,7 +42,10 @@ with gr.Blocks(theme=gr.themes.Soft()) as demo:
         inputs=input_img, 
         outputs=[output_labels, output_text] 
     ) 
-    
+
 if __name__ == "__main__":
     demo.queue()
-    demo.launch()
+    
+    # Koyeb requires binding to 0.0.0.0 and reading the dynamic PORT variable
+    server_port = int(os.environ.get("PORT", 8000))
+    demo.launch(server_name="0.0.0.0", server_port=server_port)
