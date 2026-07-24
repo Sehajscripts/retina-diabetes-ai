@@ -1,6 +1,3 @@
-torch
-torchvision
-segmentation-models-pytorch
-opencv-python-headless
-numpy
-gradio
+gradio>=4.0.0
+pillow
+
